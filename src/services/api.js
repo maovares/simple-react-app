@@ -4,28 +4,25 @@
  */
 async function getJwtFromBackend() {
   try {
-    // 1. Pedir el usuario autenticado a SWA
-    const res = await fetch("/.auth/me");
-    const { clientPrincipal } = await res.json();
+    // 1. Opcional: Verificar si el usuario está autenticado para el UI.
+    const authRes = await fetch("/.auth/me");
+    const { clientPrincipal } = await authRes.json();
 
-    // Si no hay clientPrincipal, el usuario no está autenticado.
     if (!clientPrincipal) {
       return null;
     }
 
-    // 2. Mandar ese objeto al backend para que firme un JWT.
-    //    Asegúrate de reemplazar <tu-functionapp> o usar una variable de entorno.
-    const resp = await fetch(process.env.REACT_APP_TOKEN_FUNCTION_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clientPrincipal })
+    // 2. Hacer la llamada al back-end SIN enviar el clientPrincipal.
+    //    El proxy de SWA se encarga de inyectar la identidad en el encabezado.
+    const res = await fetch("/api/GetToken", {
+      method: "POST"
     });
 
-    if (!resp.ok) {
-      throw new Error(`Error al obtener el token JWT: ${resp.statusText}`);
+    if (!res.ok) {
+      throw new Error(`Error al obtener el token JWT: ${res.statusText}`);
     }
 
-    const data = await resp.json();
+    const data = await res.json();
     return data.token; // <-- JWT firmado
   } catch (e) {
     console.error('No se pudo obtener el token JWT del backend.', e);
