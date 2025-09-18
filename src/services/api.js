@@ -66,28 +66,44 @@ async function getApiAuthToken() {
   }
 }
 
-export const fetchProducts = async () => {
-    try {
-        const jwt = await getApiAuthToken();
-        if (!jwt) {
-            // Si no hay token, el usuario no está autenticado.
-            return [];
-        }
-
-        const response = await fetch(process.env.REACT_APP_API_URL, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${jwt}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Error fetching products');
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error(error);
-        return [];
+export const fetchProducts = async (page = 0, size = 20) => {
+  try {
+    const jwt = await getApiAuthToken();
+    if (!jwt) {
+      // Si no hay token, el usuario no está autenticado.
+      return {
+        content: [],
+        page: 0,
+        size: 20,
+        totalElements: 0,
+        totalPages: 0
+      };
     }
+
+    const url = new URL(process.env.REACT_APP_API_URL);
+    url.searchParams.append('page', page);
+    url.searchParams.append('size', size);
+
+    const response = await fetch(url.toString(), {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${jwt}`
+      }
+    });
+    if (!response.ok) {
+      throw new Error('Error fetching products');
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(error);
+    return {
+      content: [],
+      page: 0,
+      size: 20,
+      totalElements: 0,
+      totalPages: 0
+    };
+  }
 };
