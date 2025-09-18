@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { fetchProducts } from "./services/api";
 import ProductCard from "./components/ProductCard";
 
@@ -28,7 +28,7 @@ function App() {
     getUserInfo();
   }, []);
 
-  const loadProducts = async (page = 0) => {
+  const loadProducts = useCallback(async (page = 0) => {
     if (!user) {
       setLoading(false);
       setProducts([]);
@@ -51,11 +51,11 @@ function App() {
       totalPages: data.totalPages
     });
     setLoading(false);
-  };
+  }, [user, pagination.size]);
 
   useEffect(() => {
     loadProducts(0);
-  }, [user]);
+  }, [user, loadProducts]);
 
   const headerStyles = {
     display: 'flex',
