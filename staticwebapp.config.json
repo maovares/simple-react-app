@@ -1,0 +1,1 @@
+{"routes":[{"route":"/api/*","allowedRoles":["authenticated"],"forwardingGateway":{"forwardingAuthHeader":true}}]}
