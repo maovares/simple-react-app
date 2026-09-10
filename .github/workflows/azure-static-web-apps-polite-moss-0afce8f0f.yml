@@ -65,6 +65,6 @@ with:
       output_location: "build"
     env:
       REACT_APP_API_URL: "https://gabriel-api-management.azure-api.net/v1"
-      REACT_APP_API_KEY: "PEGA_AQUI_TU_SUBSCRIPTION_KEY_PRIMARY"          
+      REACT_APP_API_KEY: "038bb94039e04ca89fe17f131e7f6f18"          
 
 
